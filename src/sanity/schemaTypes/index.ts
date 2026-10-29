@@ -6,6 +6,7 @@ import { brewGuide } from "./brewGuide";
 import { journalPost } from "./journalPost";
 import { siteSettings } from "./siteSettings";
 import { promoCode } from "./promoCode";
+import { teamMember } from "./teamMember";
 
 /**
  * Registry of all schema types exposed to Sanity Studio. Add new schemas
@@ -20,5 +21,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     journalPost,
     siteSettings,
     promoCode,
+    teamMember,
   ],
 };

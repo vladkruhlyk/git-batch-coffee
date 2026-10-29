@@ -390,6 +390,33 @@ export function adaptJournalPost(s: SanityJournalPost): JournalPost {
 // Site settings
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Team member (Про нас)
+// ---------------------------------------------------------------------------
+
+export interface SanityTeamMember {
+  _id: string;
+  name: string;
+  role?: string;
+  photo?: SanityImage;
+}
+
+export interface TeamMemberView {
+  id: string;
+  name: string;
+  role: string;
+  photoUrl?: string;
+}
+
+export function adaptTeamMember(s: SanityTeamMember): TeamMemberView {
+  return {
+    id: s._id,
+    name: s.name,
+    role: s.role ?? "",
+    photoUrl: s.photo?.url,
+  };
+}
+
 export interface SanitySiteSettings {
   title?: string;
   description?: string;

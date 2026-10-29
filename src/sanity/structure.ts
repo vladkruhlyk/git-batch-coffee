@@ -48,6 +48,14 @@ export const structure: StructureResolver = (S) =>
         ),
       S.divider(),
       S.listItem()
+        .title("Команда (Про нас)")
+        .child(
+          S.documentTypeList("teamMember")
+            .title("Команда")
+            .defaultOrdering([{ field: "order", direction: "asc" }]),
+        ),
+      S.divider(),
+      S.listItem()
         .title("Промокоди")
         .child(S.documentTypeList("promoCode").title("Промокоди")),
       S.divider(),

@@ -16,12 +16,14 @@ import {
   adaptJournalPost,
   adaptProduct,
   adaptSiteSettings,
+  adaptTeamMember,
   type SanityBanner,
   type SanityBrewGuide,
   type SanityCategory,
   type SanityJournalPost,
   type SanityProduct,
   type SanitySiteSettings,
+  type SanityTeamMember,
 } from "./adapters";
 import {
   BANNERS_QUERY,
@@ -33,6 +35,7 @@ import {
   PRODUCTS_QUERY,
   PRODUCT_BY_SLUG_QUERY,
   SITE_SETTINGS_QUERY,
+  TEAM_MEMBERS_QUERY,
 } from "../queries";
 
 /** Tag the fetch with a Next.js cache tag so the on-demand revalidate
@@ -110,6 +113,15 @@ export async function fetchJournalPostBySlug(slug: string) {
     tags(`journalPost:${slug}`),
   );
   return raw ? adaptJournalPost(raw) : null;
+}
+
+export async function fetchTeamMembers() {
+  const raw = await client.fetch<SanityTeamMember[]>(
+    TEAM_MEMBERS_QUERY,
+    {},
+    tags("teamMember"),
+  );
+  return raw.map(adaptTeamMember);
 }
 
 export async function fetchSiteSettings() {

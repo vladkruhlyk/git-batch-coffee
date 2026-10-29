@@ -145,6 +145,14 @@ export const JOURNAL_POST_BY_SLUG_QUERY = `
   }
 `;
 
+export const TEAM_MEMBERS_QUERY = `
+  *[_type == "teamMember" && visible == true] | order(order asc) {
+    _id,
+    name, role,
+    "photo": photo{ "url": asset->url }
+  }
+`;
+
 export const SITE_SETTINGS_QUERY = `
   *[_type == "siteSettings"][0] {
     title, description,
