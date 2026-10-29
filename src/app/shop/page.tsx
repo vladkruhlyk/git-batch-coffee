@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ShopCatalog } from "@/components/shop/catalog";
-import { CATEGORIES, type CategoryKey } from "@/data/products";
+import {
+  CATEGORIES,
+  type CategoryKey,
+  type RoastProfile,
+} from "@/data/products";
 import { fetchProducts } from "@/sanity/lib/fetchers";
 
 export const metadata: Metadata = {
@@ -27,23 +31,44 @@ function parseCategoryParam(raw: string | string[] | undefined): CategoryKey[] {
 }
 
 interface PageProps {
-  searchParams: Promise<{ category?: string | string[] }>;
+  searchParams: Promise<{
+    category?: string | string[];
+    roast?: string | string[];
+  }>;
 }
 
 export default async function ShopPage({ searchParams }: PageProps) {
-  const { category } = await searchParams;
+  const { category, roast } = await searchParams;
   const products = await fetchProducts();
   const initialCategories = parseCategoryParam(category);
 
-  // Key the catalog by the URL category list. When the user navigates
-  // /shop → /shop?category=drip (e.g. picking a category from the search
-  // overlay), Next App Router does a soft re-render: ShopCatalog gets the
-  // new prop, but its `useState` lazy init only runs on mount, so without a
-  // key the seeded `filters.categories` would never refresh. The key forces
-  // a clean remount that picks up the new URL state.
-  const catalogKey = initialCategories.length
-    ? initialCategories.slice().sort().join(",")
-    : "all";
+  // Roast profiles are free text on products — accept only `?roast=` values
+  // that actually exist in the catalog. Drives the "Кава в зернах" nav
+  // submenu (Еспресо / Фільтр).
+  const validRoasts = new Set<RoastProfile>(
+    products.flatMap((p) => p.roasts ?? []),
+  );
+  const rawRoasts = roast
+    ? Array.isArray(roast)
+      ? roast
+      : roast.split(",")
+    : [];
+  const initialRoasts = rawRoasts
+    .map((r) => r.trim())
+    .filter((r): r is RoastProfile => validRoasts.has(r as RoastProfile));
+
+  // Key the catalog by the URL filter state. Next App Router does a soft
+  // re-render on /shop → /shop?category=drip (or ?roast=Еспресо): ShopCatalog
+  // gets new props, but its `useState` lazy init only runs on mount, so
+  // without a key the seeded filters would never refresh. The key forces a
+  // clean remount that picks up the new URL state.
+  const catalogKey =
+    [
+      initialCategories.slice().sort().join(","),
+      initialRoasts.slice().sort().join(","),
+    ]
+      .filter(Boolean)
+      .join("|") || "all";
 
   return (
     <>
@@ -53,6 +78,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
           key={catalogKey}
           products={products}
           initialCategories={initialCategories}
+          initialRoasts={initialRoasts}
         />
       </main>
       <Footer />

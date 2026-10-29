@@ -19,12 +19,25 @@ import { EASING } from "@/lib/easing";
 /** Catalog categories shown in the "Каталог" dropdown (desktop) and the
  *  "Наша кава" accordion (mobile). Each links straight into /shop with the
  *  category filter pre-selected. Icons reuse the category line-art. */
-const CATALOG_CATEGORIES = [
+interface CatalogCategory {
+  label: string;
+  href: string;
+  icon: string;
+  sub: string;
+  /** Optional nested links (e.g. roast profiles under "Кава в зернах"). */
+  children?: { label: string; href: string }[];
+}
+
+const CATALOG_CATEGORIES: CatalogCategory[] = [
   {
     label: "Кава в зернах",
     href: "/shop?category=beans",
     icon: "/cat-icons/beans.png",
     sub: "Свіже обсмаження",
+    children: [
+      { label: "Еспресо", href: "/shop?category=beans&roast=Еспресо" },
+      { label: "Фільтр", href: "/shop?category=beans&roast=Фільтр" },
+    ],
   },
   {
     label: "Дріп-пакети",
@@ -238,23 +251,38 @@ export function Header({ overlay = false }: HeaderProps) {
                     >
                       <div className="flex flex-col gap-1 pb-3 pl-1">
                         {CATALOG_CATEGORIES.map((c) => (
-                          <Link
-                            key={c.href}
-                            href={c.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-4 py-2.5 hover:opacity-60 transition-opacity"
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={c.icon}
-                              alt=""
-                              aria-hidden
-                              className="h-7 w-7"
-                            />
-                            <span className="font-display text-2xl">
-                              {c.label}
-                            </span>
-                          </Link>
+                          <div key={c.href}>
+                            <Link
+                              href={c.href}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center gap-4 py-2.5 hover:opacity-60 transition-opacity"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={c.icon}
+                                alt=""
+                                aria-hidden
+                                className="h-7 w-7"
+                              />
+                              <span className="font-display text-2xl">
+                                {c.label}
+                              </span>
+                            </Link>
+                            {c.children && (
+                              <div className="flex flex-col pl-11 pb-1">
+                                {c.children.map((ch) => (
+                                  <Link
+                                    key={ch.href}
+                                    href={ch.href}
+                                    onClick={() => setMobileOpen(false)}
+                                    className="py-1.5 text-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                                  >
+                                    — {ch.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </motion.div>
@@ -355,27 +383,62 @@ function CatalogDropdown() {
             className="absolute left-1/2 top-full z-50 w-[340px] -translate-x-1/2 pt-4"
           >
             <div className="rounded-[var(--radius-xl)] border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] p-2 text-[var(--color-text-primary)] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]">
-              {CATALOG_CATEGORIES.map((c) => (
-                <Link
-                  key={c.href}
-                  href={c.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-[var(--radius-lg)] p-2.5 hover:bg-[var(--color-bg-secondary)] transition-colors duration-200"
-                >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-bg-secondary)]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.icon} alt="" aria-hidden className="h-6 w-6" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block font-display font-semibold text-[15px] leading-tight">
-                      {c.label}
+              {CATALOG_CATEGORIES.map((c) =>
+                c.children ? (
+                  <div key={c.href} className="rounded-[var(--radius-lg)] p-2.5">
+                    <Link
+                      href={c.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 hover:opacity-70 transition-opacity"
+                    >
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-bg-secondary)]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={c.icon} alt="" aria-hidden className="h-6 w-6" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-display font-semibold text-[15px] leading-tight">
+                          {c.label}
+                        </span>
+                        <span className="block text-[12px] text-[var(--color-text-secondary)]">
+                          {c.sub}
+                        </span>
+                      </span>
+                    </Link>
+                    <div className="mt-2 flex flex-wrap gap-1.5 pl-[3.25rem]">
+                      {c.children.map((ch) => (
+                        <Link
+                          key={ch.href}
+                          href={ch.href}
+                          onClick={() => setOpen(false)}
+                          className="rounded-full bg-[var(--color-bg-secondary)] px-3 py-1 text-[12px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                        >
+                          {ch.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    key={c.href}
+                    href={c.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-[var(--radius-lg)] p-2.5 hover:bg-[var(--color-bg-secondary)] transition-colors duration-200"
+                  >
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-bg-secondary)]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={c.icon} alt="" aria-hidden className="h-6 w-6" />
                     </span>
-                    <span className="block text-[12px] text-[var(--color-text-secondary)]">
-                      {c.sub}
+                    <span className="min-w-0">
+                      <span className="block font-display font-semibold text-[15px] leading-tight">
+                        {c.label}
+                      </span>
+                      <span className="block text-[12px] text-[var(--color-text-secondary)]">
+                        {c.sub}
+                      </span>
                     </span>
-                  </span>
-                </Link>
-              ))}
+                  </Link>
+                ),
+              )}
               <Link
                 href="/shop"
                 onClick={() => setOpen(false)}

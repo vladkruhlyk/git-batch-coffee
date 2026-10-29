@@ -26,6 +26,7 @@ import {
   getStartingPrice,
   type CategoryKey,
   type Product,
+  type RoastProfile,
 } from "@/data/products";
 
 interface ShopCatalogProps {
@@ -33,6 +34,9 @@ interface ShopCatalogProps {
   /** Categories preselected from the URL (e.g. /shop?category=drip). The
    *  server page parses the query and hands us a normalized list. */
   initialCategories?: CategoryKey[];
+  /** Roast profiles preselected from the URL (e.g. /shop?roast=Еспресо),
+   *  used by the "Кава в зернах" nav submenu. */
+  initialRoasts?: RoastProfile[];
 }
 
 /**
@@ -45,10 +49,12 @@ interface ShopCatalogProps {
 export function ShopCatalog({
   products,
   initialCategories = [],
+  initialRoasts = [],
 }: ShopCatalogProps) {
   const [filters, setFilters] = useState<ShopFilters>(() => ({
     ...EMPTY_FILTERS,
     categories: initialCategories,
+    roasts: initialRoasts,
   }));
   const [sort, setSort] = useState<SortKey>("popular");
   const [sortOpen, setSortOpen] = useState(false);
