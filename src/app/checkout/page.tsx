@@ -648,7 +648,7 @@ export default function CheckoutPage() {
                   rows={3}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Подарунковий пакет / помолоти на еспресо / тощо"
+                  placeholder=""
                   className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-transparent p-4 text-sm focus:border-[var(--color-text-primary)] outline-none transition-colors resize-none"
                 />
               </FormGroup>
