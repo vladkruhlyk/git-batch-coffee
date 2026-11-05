@@ -6,7 +6,7 @@
  * answer in one place. (Free helper texts in markdown blocks still need
  * a hand edit, but those are content not logic.)
  */
-export const FREE_SHIPPING_THRESHOLD = 3500;
+export const FREE_SHIPPING_THRESHOLD = 2280;
 
 /** Flat carrier rate when the order is below the threshold. */
 export const DELIVERY_BASE = 80;
