@@ -27,6 +27,7 @@ import {
 } from "@/lib/orders";
 import { useAuth } from "@/lib/auth-store";
 import { EASING } from "@/lib/easing";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
 import { cn, formatPrice } from "@/lib/utils";
 
 /**
@@ -298,11 +299,18 @@ function Body({
                   : "Доставка"
               }
               value={
-                order.deliveryFee === 0
-                  ? "Безкоштовно"
-                  : formatPrice(order.deliveryFee)
+                order.deliveryFee > 0
+                  ? formatPrice(order.deliveryFee)
+                  : order.deliveryMethod === "pickup" ||
+                      order.subtotal - order.discount >= FREE_SHIPPING_THRESHOLD
+                    ? "Безкоштовно"
+                    : "За тарифами НП"
               }
-              positive={order.deliveryFee === 0}
+              positive={
+                order.deliveryFee === 0 &&
+                (order.deliveryMethod === "pickup" ||
+                  order.subtotal - order.discount >= FREE_SHIPPING_THRESHOLD)
+              }
             />
             {order.discount > 0 && (
               <Row

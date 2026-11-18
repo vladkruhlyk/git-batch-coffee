@@ -14,6 +14,7 @@ import {
   refreshCartPrices,
 } from "@/lib/refresh-cart-prices";
 import { discountFromSnapshot, type PromoSnapshot } from "@/lib/promo";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
 import {
   NovaPoshtaPicker,
   type NpSelection,
@@ -193,6 +194,12 @@ export default function CheckoutPage() {
   // discount, so this just keeps the summary honest.
   const discount = discountFromSnapshot(promo, subtotal);
   const total = subtotal + deliveryFee - discount;
+  // Nova Poshta is paid by the customer at the branch, so the store never
+  // charges for it online — EXCEPT we promise free shipping (we send at our
+  // cost) from the threshold. Below it the NP line reads "За тарифами НП".
+  // Pickup is always free.
+  const freeDelivery =
+    delivery === "pickup" || subtotal - discount >= FREE_SHIPPING_THRESHOLD;
 
   // Nova Poshta methods require a chosen city + warehouse.
   const deliveryReady = delivery === "pickup" || npSelection !== null;
@@ -794,8 +801,14 @@ export default function CheckoutPage() {
                     <dt className="text-[var(--color-text-secondary)]">
                       {delivery === "pickup" ? "Самовивіз" : "Нова Пошта"}
                     </dt>
-                    <dd className="tabular-nums text-emerald-700">
-                      {delivery === "pickup" ? "Безкоштовно" : "За тарифами НП"}
+                    <dd
+                      className={`tabular-nums ${
+                        freeDelivery
+                          ? "text-emerald-700"
+                          : "text-[var(--color-text-secondary)]"
+                      }`}
+                    >
+                      {freeDelivery ? "Безкоштовно" : "За тарифами НП"}
                     </dd>
                   </div>
                   {discount > 0 && promo && (
