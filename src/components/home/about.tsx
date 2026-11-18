@@ -9,17 +9,17 @@ import { Button } from "@/components/ui/button";
 import { EASING } from "@/lib/easing";
 
 const STATS = [
-  { value: "12", label: "Ферм-партнерів" },
-  { value: "250г", label: "Середня партія" },
+  { value: "20+", label: "Лотів" },
+  { value: "250г", label: "Стандартне пакування" },
   { value: "< 14", label: "Днів до чашки" },
-  { value: "2022", label: "Заснована" },
+  { value: "2025", label: "Заснована" },
 ];
 
 const PRINCIPLES = [
-  "Прямі контракти з фермами",
-  "Повітряна обсмажка без диму",
-  "Партія до 30 кг",
-  "Відправка в день обсмажки",
+  "Власне обсмажування",
+  "Ретельний контроль якості",
+  "Свіжообсмажена кава",
+  "Спешелті кава з усього світу",
 ];
 
 export function HomeAbout() {
@@ -59,15 +59,16 @@ export function HomeAbout() {
             <div className="mt-10 lg:mt-14 grid md:grid-cols-2 gap-x-10 gap-y-5 max-w-xl">
               <Reveal delay={0.2}>
                 <p className="text-[15px] text-white/65 leading-relaxed">
-                  Ми почали BATCH у 2022 з простої ідеї: не має бути кави, яку
-                  соромно подати близьким. Все, що ми відправляємо — обсмажене
-                  за останні два тижні.
+                  Ми почали BATCH у 2025 з бажання створити якісну каву,
+                  приділяючи увагу кожному етапу виробництва.
                 </p>
               </Reveal>
               <Reveal delay={0.35}>
                 <p className="text-[15px] text-white/65 leading-relaxed">
-                  Знаємо кожну ферму особисто, на&nbsp;ім&rsquo;я. Обсмажуємо
-                  невеликими партіями. І чесно розповідаємо, звідки кожна чашка.
+                  Для нас важлива якість на кожному етапі: від вибору зеленої
+                  кави та контролю обсмажування до пакування готового продукту.
+                  Ми регулярно проводимо капінги, перевіряємо якість
+                  обсмажування та працюємо над стабільністю смаку.
                 </p>
               </Reveal>
             </div>
@@ -119,7 +120,7 @@ export function HomeAbout() {
             <Reveal delay={0.8}>
               <div className="text-right">
                 <div className="text-[10px] tracking-[0.25em] uppercase text-white/30">
-                  Est. 2022 · Poltava
+                  Est. 2025 · Poltava
                 </div>
               </div>
             </Reveal>
